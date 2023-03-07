@@ -7,6 +7,8 @@ import { RootStackParamList } from "../../App";
 import { authForm } from "../interfaces/authForm";
 import { useLazyQuery } from "@apollo/client";
 import { USER_LOGIN } from "../apollo/auth/auth";
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -21,10 +23,24 @@ export default function Login({ navigation }: Props) {
     navigation.navigate("SignUp");
   }
 
+  const _storeToken = async (token: string) => {
+    try {
+      await AsyncStorage.setItem(
+        'token',
+        token,
+      );
+      
+    } catch (error) {
+      // Error saving data
+      alert(error)
+    }
+  };
+  
   async function submitLoginForm(values: authForm) {
     try {
       const { data } = await login({ variables: values });
-      console.log(data);
+      _storeToken(data.login.access_token)
+      
     } catch (e) {
       console.log(e);
     }
