@@ -4,6 +4,10 @@ import LoginPage from "./src/pages/loginPage/LoginPage";
 import RegisterPage from "./src/pages/registerPage/RegisterPage";
 import { ApolloProvider } from "@apollo/client";
 import client from "./src/apollo/client";
+import React from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+
 export default function App() {
   return (
     <View style={styles.container}>
