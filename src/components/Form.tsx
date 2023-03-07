@@ -1,18 +1,12 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, View, Text } from "react-native";
-import {
-  Stack,
-  Button,
-  TextInput,
-  IconButton,
-} from "@react-native-material/core";
+import { Button, TextInput, IconButton } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import { Ionicons } from "@expo/vector-icons";
-import { IauthSubmit } from "../interfaces/IauthSubmit";
-import { IformProps } from "../interfaces/IformProps";
+import { authForm } from "../interfaces/authForm";
+import { formProps } from "../interfaces/formProps";
 
-export default function Form({ handleClick }: IformProps) {
+export default function Form({ handleClick, loading }: formProps) {
   const {
     control,
     handleSubmit,
@@ -24,8 +18,8 @@ export default function Form({ handleClick }: IformProps) {
     },
   });
 
-  const onSubmit = (data: IauthSubmit) => {
-    handleClick(data.email, data.password);
+  const onSubmit = (data: authForm) => {
+    handleClick(data);
   };
 
   const [securedPass, setSecuredPass] = useState(true);
@@ -39,7 +33,8 @@ export default function Form({ handleClick }: IformProps) {
       <Controller
         control={control}
         rules={{
-          required: 'Invalid email',
+          required: "Invalid email",
+          pattern: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
@@ -54,12 +49,14 @@ export default function Form({ handleClick }: IformProps) {
         )}
         name="email"
       />
-      {errors.email && <Text style={styles.error}>{errors.email.message?.toString()}</Text>}
+      {errors.email && (
+        <Text style={styles.error}>{errors.email.message || "Incorrect email"}</Text>
+      )}
 
       <Controller
         control={control}
         rules={{
-          required: 'Invalid password',
+          required: "Invalid password",
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
@@ -84,9 +81,18 @@ export default function Form({ handleClick }: IformProps) {
         )}
         name="password"
       />
-      {errors.password && <Text style={styles.error}>{errors.password.message?.toString()}</Text>}
+      {errors.password && (
+        <Text style={styles.error}>{errors.password.message}</Text>
+      )}
 
-      <Button style={styles.button} color="#C63031" title="Submit" onPress={handleSubmit(onSubmit)} />
+      <Button
+        style={styles.button}
+        color="#C63031"
+        title="Submit"
+        onPress={handleSubmit(onSubmit)}
+        loading={loading}
+        loadingIndicatorPosition="overlay"
+      />
     </View>
   );
 }
@@ -107,8 +113,8 @@ const styles = StyleSheet.create({
     minWidth: 100,
   },
   error: {
-    color: 'rgba(255, 0, 0, 0.877)'
-  }
+    color: "rgba(255, 0, 0, 0.877)",
+  },
 });
 
 // display: flex;

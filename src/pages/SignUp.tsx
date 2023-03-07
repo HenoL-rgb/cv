@@ -1,31 +1,40 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Form from "../components/Form";
-import {
-  Stack,
-  Button,
-  TextInput,
-  IconButton,
-} from "@react-native-material/core";
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Button } from "@react-native-material/core";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
+import { useMutation } from "@apollo/client";
+import { USER_REGISTER } from "../apollo/auth/auth";
+import { authForm } from "../interfaces/authForm";
 
-type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
+type Props = NativeStackScreenProps<RootStackParamList, "SignUp">;
 
 export default function SignUp({ navigation }: Props) {
-  function handleLogin() {
-    alert("submit");
+  const [register, { loading, error }] = useMutation(USER_REGISTER);
+
+  function handleRegister(data: authForm) {
+    submitRegisterForm(data)
   }
 
   function handleNavigate() {
     navigation.navigate("Login");
   }
 
+  async function submitRegisterForm(values: authForm) {
+    const { email, password } = values;
+    try {
+      const { data } = await register({ variables: { email, password } });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register Now</Text>
       <Text style={styles.subTitle}>Welcome! Sign up to continue.</Text>
-      <Form handleClick={handleLogin} />
+      <Form handleClick={handleRegister} loading={loading}/>
       <Button
         color="#C63031"
         variant="text"
@@ -42,7 +51,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     rowGap: 15,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   title: {
     fontSize: 24,
