@@ -1,7 +1,9 @@
-import React from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import LoginPage from "./src/pages/loginPage/LoginPage";
+import RegisterPage from "./src/pages/registerPage/RegisterPage";
+import { ApolloProvider } from "@apollo/client";
+import client from "./src/apollo/client";
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import Employees from "./src/pages/Employees";
@@ -10,12 +12,6 @@ import Login from "./src/pages/Login";
 import SignUp from "./src/pages/SignUp";
 import { Foundation } from "@expo/vector-icons";
 import { createStackNavigator } from '@react-navigation/stack';
-
-const client = new ApolloClient({
-  uri: "https://cv-project-js.inno.ws/api/graphql",
-  cache: new InMemoryCache(),
-});
-
 
 export type RootStackParamList = {
   Login: undefined;
@@ -31,6 +27,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   const isAuth = false;
   return (
+    <>
     <ApolloProvider client={client}>
       {isAuth ? (
         <NavigationContainer>
@@ -51,7 +48,7 @@ export default function App() {
           <RootStack.Navigator initialRouteName="Login">
             <RootStack.Screen
               name="Login"
-              component={Login}
+              component={LoginPage}
               options={{ title: "Login" }}
             />
             <RootStack.Screen
@@ -63,14 +60,12 @@ export default function App() {
         </NavigationContainer>
       )}
     </ApolloProvider>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 1
   },
 });
