@@ -1,6 +1,6 @@
 import { ApolloProvider } from "@apollo/client";
 import client from "./src/apollo/client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
@@ -23,11 +23,31 @@ const RootStack = createStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator();
 
 export default function App() {
-  const isAuth = true;
+  
+  const [auth, setAuth] = useState(false);
+
+  useEffect(() => {
+    const _retrieveToken = async () => {
+      try {
+        const value = await AsyncStorage.getItem('token');
+        if (value !== null) {
+          // We have data!!
+          setAuth(true);
+          return value;
+        }
+      } catch (error) {
+        // Error retrieving data
+      }
+      return '';
+    };
+
+    _retrieveToken();
+  }, [])
+
   return (
     <>
     <ApolloProvider client={client}>
-      {isAuth ? (
+      {auth ? (
         <NavigationContainer>
           <Drawer.Navigator initialRouteName="Employees">
             <Drawer.Screen
