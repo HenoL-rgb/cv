@@ -1,6 +1,6 @@
 import { ApolloProvider } from "@apollo/client";
 import client from "./src/apollo/client";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
@@ -10,6 +10,7 @@ import { Foundation } from "@expo/vector-icons";
 import { createStackNavigator } from '@react-navigation/stack';
 import SignUp from "./src/pages/SignUp";
 import Login from "./src/pages/Login";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -20,14 +21,33 @@ export type RootStackParamList = {
 const RootStack = createStackNavigator<RootStackParamList>();
 
 const Drawer = createDrawerNavigator();
-const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const isAuth = false;
+  
+  const [auth, setAuth] = useState(false);
+
+  useEffect(() => {
+    const _retrieveToken = async () => {
+      try {
+        const value = await AsyncStorage.getItem('token');
+        if (value !== null) {
+          // We have data!!
+          setAuth(true);
+          return value;
+        }
+      } catch (error) {
+        // Error retrieving data
+      }
+      return '';
+    };
+
+    _retrieveToken();
+  }, [])
+
   return (
     <>
     <ApolloProvider client={client}>
-      {isAuth ? (
+      {auth ? (
         <NavigationContainer>
           <Drawer.Navigator initialRouteName="Employees">
             <Drawer.Screen
