@@ -2,15 +2,17 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Form from "../components/Form";
 import { Button } from "@react-native-material/core";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
 import { authForm } from "../interfaces/authForm";
 import { useLazyQuery } from "@apollo/client";
 import { USER_LOGIN } from "../apollo/auth/auth";
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useNavigation } from "@react-navigation/native";
 
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
+//type asd = NativeStackNavigationProp<RootStackParamList, "Login">
 
 export default function Login({ navigation }: Props) {
   const [login, { loading, error }] = useLazyQuery(USER_LOGIN);
