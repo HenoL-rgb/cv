@@ -4,7 +4,18 @@ export const USERS = gql`
     query GetUsers {
         users{
             email,
-            id
+            id,
+            profile {
+                first_name,
+                last_name,
+                avatar
+            },
+            department {
+                name,
+            },
+            position {
+                name,
+            }           
         }
         
     }
