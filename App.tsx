@@ -38,6 +38,7 @@ export default function App() {
         }
       } catch (error) {
         // Error retrieving data
+        console.log(error)
       }
       return '';
     };
