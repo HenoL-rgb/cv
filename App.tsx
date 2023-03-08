@@ -1,11 +1,9 @@
 import { ApolloProvider } from "@apollo/client";
 import client from "./src/apollo/client";
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import Employees from "./src/pages/Employees";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Foundation } from "@expo/vector-icons";
 import { createStackNavigator } from '@react-navigation/stack';
 import SignUp from "./src/pages/SignUp";
@@ -55,7 +53,7 @@ export default function App() {
               name="Employees"
               component={Employees}
               options={{
-                drawerIcon: ({ focused, size, color }) => (
+                drawerIcon: ({ size, color }) => (
                   <Foundation name="torsos" size={size} color={color} />
                 ),
               }}
@@ -82,9 +80,3 @@ export default function App() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-});

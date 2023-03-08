@@ -6571,19 +6571,6 @@
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-18.2.0.tgz"
   "version" "18.2.0"
 
-"react-native-actions-sheet-picker@^0.3.5":
-  "integrity" "sha512-spbPZxvBet9WC9m++G73TULTxoOYwFGmA2FpS8plXbrSaVczOdhXwaIakmlkEALG27CqyUsdoMOiGOwpC/oyNg=="
-  "resolved" "https://registry.npmjs.org/react-native-actions-sheet-picker/-/react-native-actions-sheet-picker-0.3.5.tgz"
-  "version" "0.3.5"
-  dependencies:
-    "react-native-actions-sheet" "^0.6.1"
-    "react-native-gesture-handler" "2.2.1"
-
-"react-native-actions-sheet@^0.6.1":
-  "integrity" "sha512-MKrI3fxjxenAMwcSyI8fHwcG41ed3Jk5QUiH6/CYvuYRCJSdsxyNfC7Hc6TeM2TYz2bwfsaFBPTMdsR8mN0MRA=="
-  "resolved" "https://registry.npmjs.org/react-native-actions-sheet/-/react-native-actions-sheet-0.6.2.tgz"
-  "version" "0.6.2"
-
 "react-native-codegen@^0.71.5":
   "integrity" "sha512-rfsuc0zkuUuMjFnrT55I1mDZ+pBRp2zAiRwxck3m6qeGJBGK5OV5JH66eDQ4aa+3m0of316CqrJDRzVlYufzIg=="
   "resolved" "https://registry.npmjs.org/react-native-codegen/-/react-native-codegen-0.71.5.tgz"
@@ -6603,17 +6590,6 @@
   "integrity" "sha512-a0BcH3Qb1tgVqUutc6d3VuWQkI1AM3+fJx8dkxzZs9t06qA27QgURYFoklpabuWpsUTzuKRpxleykp25E8m7tg=="
   "resolved" "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.9.0.tgz"
   "version" "2.9.0"
-  dependencies:
-    "@egjs/hammerjs" "^2.0.17"
-    "hoist-non-react-statics" "^3.3.0"
-    "invariant" "^2.2.4"
-    "lodash" "^4.17.21"
-    "prop-types" "^15.7.2"
-
-"react-native-gesture-handler@2.2.1":
-  "integrity" "sha512-P4kAPbSY8VFAjvFNzfePgFsbZEldfEnEfNqOJw6MlpcdXrPGwRbvMqWMVkA9lifdKTZ3XifvAgJ8+R+uEZN0zA=="
-  "resolved" "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.2.1.tgz"
-  "version" "2.2.1"
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     "hoist-non-react-statics" "^3.3.0"

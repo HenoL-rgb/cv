@@ -26,7 +26,7 @@ export default function Employee(props: Employee) {
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.title}>
-          {props.firstName} {props.lastName}
+          {props.firstName ? props.firstName : 'Unknown'} {props.lastName}
         </Text>
         <Text style={styles.text}>{props.position.name}</Text>
         <Text style={styles.text}>{props.department.name}</Text>

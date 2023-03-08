@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import { IconButton, TextInput } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
-import { FlatList, View, RefreshControl, StyleSheet } from "react-native";
+import { FlatList, View, RefreshControl, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { USERS } from "../apollo/users/users";
 import Employee from "../components/Employee";
@@ -21,7 +21,6 @@ export default function Employees() {
   const filteredAndSorted = sortEmployees(filtered, sortBy);
 
   function handleSortMenu(sortBy: string) {
-    console.log(sortBy);
     setSortBy(sortBy);
   }
 
@@ -34,6 +33,7 @@ export default function Employees() {
   }
 
   function filterEmployees(employees: users, query: string): user[] {
+    
     return employees
       ? employees.users.filter((user: user) => {
           if (user.profile.first_name && user.profile.last_name) {
@@ -51,12 +51,12 @@ export default function Employees() {
   }
 
   function sortEmployees(employees: user[], sortBy: string | null): user[] {
-    return employees;
+    if (!sortBy) return employees;
+
+    return [...employees.sort(sortUp ? compareAsc : compareDesc)];
   }
 
-  return loading ? (
-    <Loader />
-  ) : (
+  return (
     <View style={styles.container}>
       <View style={styles.searchAndSort}>
         <TextInput
@@ -73,13 +73,21 @@ export default function Employees() {
           value={query}
           onChangeText={handleQuery}
         />
+        <EmployeeSortMenu
+          sortBy={sortBy}
+          sortUp={sortUp}
+          handleChangeSort={handleChangeSort}
+          handleSortMenu={handleSortMenu}
+        />
       </View>
+
+      {error ? <Text>Error while loading employees</Text> : ''}
 
       {loading ? (
         <Loader />
       ) : (
         <FlatList
-          data={filtered}
+          data={filteredAndSorted}
           refreshControl={<RefreshControl refreshing={loading} />}
           ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
           renderItem={({ item }) => (
@@ -97,6 +105,72 @@ export default function Employees() {
       )}
     </View>
   );
+
+  function compareAsc(user1: user, user2: user) {
+    if (!sortBy) return 0;
+    switch (sortBy) {
+      case "first_name": {
+        if (!user1.profile.first_name) return -1;
+        if (!user2.profile.first_name) return 1;
+        return user1.profile.first_name.localeCompare(user2.profile.first_name);
+      }
+      case "last_name": {
+        if (!user1.profile.last_name) return -1;
+        if (!user2.profile.last_name) return 1;
+        return user1.profile.last_name.localeCompare(user2.profile.last_name);
+      }
+      case "email": {
+        if (!user1.email) return -1;
+        if (!user2.email) return 1;
+        return user1.email.localeCompare(user2.email);
+      }
+      case "department": {
+        if (!user1.department) return -1;
+        if (!user2.department) return 1;
+        return user1.department.name.localeCompare(user2.department.name);
+      }
+      case "position": {
+        if (!user1.position) return -1;
+        if (!user2.position) return 1;
+        return user1.position.name.localeCompare(user2.position.name);
+      }
+    }
+
+    return -1;
+  }
+
+  function compareDesc(user1: user, user2: user) {
+    if (!sortBy) return 0;
+    switch (sortBy) {
+      case "first_name": {
+        if (!user1.profile.first_name) return 1;
+        if (!user2.profile.first_name) return -1;
+        return user2.profile.first_name.localeCompare(user1.profile.first_name);
+      }
+      case "last_name": {
+        if (!user1.profile.last_name) return 1;
+        if (!user2.profile.last_name) return -1;
+        return user2.profile.last_name.localeCompare(user1.profile.last_name);
+      }
+      case "email": {
+        if (!user1.email) return 1;
+        if (!user2.email) return -1;
+        return user2.email.localeCompare(user1.email);
+      }
+      case "department": {
+        if (!user1.department) return 1;
+        if (!user2.department) return -1;
+        return user2.department.name.localeCompare(user1.department.name);
+      }
+      case "position": {
+        if (!user1.position) return 1;
+        if (!user2.position) return -1;
+        return user2.position.name.localeCompare(user1.position.name);
+      }
+    }
+
+    return -1;
+  }
 }
 
 const styles = StyleSheet.create({
