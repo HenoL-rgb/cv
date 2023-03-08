@@ -11,6 +11,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import SignUp from "./src/pages/SignUp";
 import Login from "./src/pages/Login";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Account from "./src/pages/Account";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -53,6 +54,15 @@ export default function App() {
             <Drawer.Screen
               name="Employees"
               component={Employees}
+              options={{
+                drawerIcon: ({ focused, size, color }) => (
+                  <Foundation name="torsos" size={size} color={color} />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="Account"
+              component={Account}
               options={{
                 drawerIcon: ({ focused, size, color }) => (
                   <Foundation name="torsos" size={size} color={color} />
