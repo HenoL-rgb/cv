@@ -33,7 +33,6 @@ export default function App() {
         if (value !== null) {
           // We have data!!
           setAuth(true);
-          console.log(value)
           return value;
         }
       } catch (error) {
