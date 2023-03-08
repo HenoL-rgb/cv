@@ -65,10 +65,9 @@ export default function Employees() {
           style={{ margin: 16, flex: 2 }}
           inputStyle={{ fontSize: 16, paddingStart: 16, paddingEnd: 12 }}
           color="rgba(0,0,0, 0.5)"
-          trailing={(props: JSX.IntrinsicAttributes) => (
+          trailing={() => (
             <IconButton
               icon={(props) => <Icon name="search-outline" {...props} />}
-              {...props}
             />
           )}
           value={query}
