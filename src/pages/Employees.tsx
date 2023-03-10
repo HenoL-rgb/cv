@@ -14,10 +14,16 @@ import ApplySwipeable from "../components/ApplySwipeable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Employees() {
-  const { loading, error, data } = useQuery(USERS);
+  const { loading, error, data, fetchMore, refetch } = useQuery(USERS, {
+    variables: {
+      offset: 0,
+      limit: 20,
+    },
+  });
   const [query, setQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortUp, setSortUp] = useState<boolean | null>(null);
+  const [fetchingMore, setFetchingMore] = useState<boolean>(false);
   const filtered = filterEmployees(data, query);
   const filteredAndSorted = sortEmployees(filtered, sortBy);
 
@@ -89,8 +95,29 @@ export default function Employees() {
       ) : (
         <FlatList
           data={filteredAndSorted}
-          refreshControl={<RefreshControl refreshing={loading} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={() =>
+                refetch({
+                  offset: 0,
+                  limit: 20,
+                })
+              }
+            />
+          }
           ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
+          onEndReachedThreshold={0.5}
+          onEndReached={() =>
+            {
+              setFetchingMore(true)
+              fetchMore({
+              variables: {
+                offset: data.users.length,
+              },
+            }).then(() => setFetchingMore(false))}
+          }
+          style={styles.employees}
           renderItem={({ item }) => (
             <ApplySwipeable
               rightActionColor="red"
@@ -104,7 +131,7 @@ export default function Employees() {
                       color="white"
                     />
                   )}
-                  onPress={() => alert('e')}
+                  onPress={() => alert("e")}
                 />
               }
               LeftActionIcon={
@@ -128,8 +155,10 @@ export default function Employees() {
               />
             </ApplySwipeable>
           )}
+          ListFooterComponent={fetchingMore ? <Loader /> : null}
         ></FlatList>
       )}
+
     </View>
   );
 
@@ -203,6 +232,9 @@ export default function Employees() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
+    flex: 1,
+  },
+  employees: {
     flex: 1,
   },
   searchAndSort: {

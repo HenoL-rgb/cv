@@ -67,11 +67,12 @@ export default function ApplySwipeable({
     <Swipeable
       renderRightActions={renderRightActions}
       renderLeftActions={renderLeftActions}
-      rightThreshold={20}
-      leftThreshold={20}
+      rightThreshold={60}
+      leftThreshold={60}
       friction={2}
       containerStyle={[styles.container, {}]}
-
+      overshootLeft={false}
+      overshootRight={false}
     >
       {children}
     </Swipeable>
