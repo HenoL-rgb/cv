@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { IconButton, TextInput } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/Ionicons";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FlatList, View, RefreshControl, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { USERS } from "../apollo/users/users";
@@ -24,6 +24,7 @@ export default function Employees() {
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortUp, setSortUp] = useState<boolean | null>(null);
   const [fetchingMore, setFetchingMore] = useState<boolean>(false);
+
   const filtered = filterEmployees(data, query);
   const filteredAndSorted = sortEmployees(filtered, sortBy);
 
@@ -39,17 +40,24 @@ export default function Employees() {
     setSortUp(sortUp ? !sortUp : true);
   }
 
-  function filterEmployees(employees: users, query: string): user[] {
+  function filterEmployees(
+    employees: users | undefined,
+    query: string
+  ): user[] {
     return employees
       ? employees.users.filter((user: user) => {
           if (
             (user.profile.first_name &&
-              user.profile.first_name.includes(query)) ||
-            (user.profile.last_name && user.profile.last_name.includes(query))
+              user.profile.first_name
+                .toLowerCase()
+                .includes(query.toLowerCase())) ||
+            (user.profile.last_name &&
+              user.profile.last_name
+                .toLowerCase()
+                .includes(query.toLowerCase()))
           ) {
             return true;
           }
-
           if (!query) {
             return user;
           }
@@ -69,8 +77,8 @@ export default function Employees() {
         <TextInput
           variant="outlined"
           placeholder="Search"
-          style={{ margin: 16, flex: 2 }}
-          inputStyle={{ fontSize: 16, paddingStart: 16, paddingEnd: 12 }}
+          style={styles.input}
+          inputStyle={styles.input.inputStyle}
           color="rgba(0,0,0, 0.5)"
           trailing={() => (
             <IconButton
@@ -95,6 +103,7 @@ export default function Employees() {
       ) : (
         <FlatList
           data={filteredAndSorted}
+          initialNumToRender={20}
           refreshControl={
             <RefreshControl
               refreshing={loading}
@@ -108,15 +117,18 @@ export default function Employees() {
           }
           ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
           onEndReachedThreshold={0.5}
-          onEndReached={() =>
-            {
-              setFetchingMore(true)
-              fetchMore({
+          onMomentumScrollBegin={() => {
+            setFetchingMore(false);
+          }}
+          onEndReached={() => {
+            if (fetchingMore || filteredAndSorted.length < 7) return;
+            fetchMore({
               variables: {
                 offset: data.users.length,
               },
-            }).then(() => setFetchingMore(false))}
-          }
+            });
+            setFetchingMore(true);
+          }}
           style={styles.employees}
           renderItem={({ item }) => (
             <ApplySwipeable
@@ -146,19 +158,20 @@ export default function Employees() {
                 />
               }
             >
-              <Employee
-                firstName={item.profile.first_name}
-                lastName={item.profile.last_name}
-                department={item.department || { name: "" }}
-                avatar={item.profile.avatar}
-                position={item.position || { name: "" }}
-              />
+              <TouchableOpacity>
+                <Employee
+                  firstName={item.profile.first_name}
+                  lastName={item.profile.last_name}
+                  department={item.department || { name: "" }}
+                  avatar={item.profile.avatar}
+                  position={item.position || { name: "" }}
+                />
+              </TouchableOpacity>
             </ApplySwipeable>
           )}
           ListFooterComponent={fetchingMore ? <Loader /> : null}
         ></FlatList>
       )}
-
     </View>
   );
 
@@ -242,5 +255,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingRight: 5,
+  },
+  input: {
+    margin: 16,
+    flex: 2,
+    inputStyle: {
+      fontSize: 16,
+      paddingStart: 16,
+      paddingEnd: 12,
+    },
   },
 });

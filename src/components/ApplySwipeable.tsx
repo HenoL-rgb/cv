@@ -1,11 +1,12 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { Animated, StyleSheet } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { PropsWithChildren } from "react";
+import { IconButtonProps } from "@mui/material";
 
 interface SwipeableProps {
-  RightActionIcon: any;
-  LeftActionIcon: any;
+  RightActionIcon: ReactElement<IconButtonProps>;
+  LeftActionIcon: ReactElement<IconButtonProps>;
   rightActionColor: string;
   leftActionColor: string;
 }
@@ -35,7 +36,7 @@ export default function ApplySwipeable({
           },
         ]}
       >
-        {RightActionIcon}
+       {RightActionIcon}
       </Animated.View>
     );
   };
@@ -67,8 +68,8 @@ export default function ApplySwipeable({
     <Swipeable
       renderRightActions={renderRightActions}
       renderLeftActions={renderLeftActions}
-      rightThreshold={60}
-      leftThreshold={60}
+      rightThreshold={40}
+      leftThreshold={40}
       friction={2}
       containerStyle={[styles.container, {}]}
       overshootLeft={false}
