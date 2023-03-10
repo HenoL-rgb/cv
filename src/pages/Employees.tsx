@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { IconButton, TextInput } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/Ionicons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, View, RefreshControl, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { USERS } from "../apollo/users/users";
@@ -10,13 +10,14 @@ import Loader from "../components/Loader";
 import { user } from "../interfaces/user";
 import { users } from "../interfaces/users";
 import EmployeeSortMenu from "../components/EmployeeSortMenu";
+import ApplySwipeable from "../components/ApplySwipeable";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Employees() {
   const { loading, error, data } = useQuery(USERS);
   const [query, setQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortUp, setSortUp] = useState<boolean | null>(null);
-
   const filtered = filterEmployees(data, query);
   const filteredAndSorted = sortEmployees(filtered, sortBy);
 
@@ -33,14 +34,14 @@ export default function Employees() {
   }
 
   function filterEmployees(employees: users, query: string): user[] {
-    
     return employees
       ? employees.users.filter((user: user) => {
-          if (user.profile.first_name && user.profile.last_name) {
-            return (
-              user.profile.first_name.includes(query) ||
-              user.profile.last_name.includes(query)
-            );
+          if (
+            (user.profile.first_name &&
+              user.profile.first_name.includes(query)) ||
+            (user.profile.last_name && user.profile.last_name.includes(query))
+          ) {
+            return true;
           }
 
           if (!query) {
@@ -81,7 +82,7 @@ export default function Employees() {
         />
       </View>
 
-      {error ? <Text>Error while loading employees</Text> : ''}
+      {error ? <Text>Error while loading employees</Text> : ""}
 
       {loading ? (
         <Loader />
@@ -91,7 +92,33 @@ export default function Employees() {
           refreshControl={<RefreshControl refreshing={loading} />}
           ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
           renderItem={({ item }) => (
-            <TouchableOpacity>
+            <ApplySwipeable
+              rightActionColor="red"
+              leftActionColor="#45ee9f"
+              RightActionIcon={
+                <IconButton
+                  icon={() => (
+                    <MaterialCommunityIcons
+                      name="trash-can-outline"
+                      size={24}
+                      color="white"
+                    />
+                  )}
+                  onPress={() => alert('e')}
+                />
+              }
+              LeftActionIcon={
+                <IconButton
+                  icon={() => (
+                    <MaterialCommunityIcons
+                      name="account-edit"
+                      size={24}
+                      color="white"
+                    />
+                  )}
+                />
+              }
+            >
               <Employee
                 firstName={item.profile.first_name}
                 lastName={item.profile.last_name}
@@ -99,7 +126,7 @@ export default function Employees() {
                 avatar={item.profile.avatar}
                 position={item.position || { name: "" }}
               />
-            </TouchableOpacity>
+            </ApplySwipeable>
           )}
         ></FlatList>
       )}

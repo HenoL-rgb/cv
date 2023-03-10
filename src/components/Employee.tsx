@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     columnGap: 10,
     padding: 8,
     alignItems: 'center',
+    backgroundColor: 'white'
   },
   avatar: {
     borderRadius: 50,
