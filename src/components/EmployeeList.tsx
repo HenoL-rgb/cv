@@ -16,7 +16,7 @@ interface EmployeeListProps {
   loading: boolean;
 }
 
-const EmployeeList = memo( function EmployeeList({
+const EmployeeList = memo(function EmployeeList({
   data,
   refetch,
   renderItem,
@@ -36,7 +36,7 @@ const EmployeeList = memo( function EmployeeList({
       renderItem={renderItem}
     ></FlatList>
   );
-})
+});
 
 export default EmployeeList;
 

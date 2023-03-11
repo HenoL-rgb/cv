@@ -23,9 +23,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import EmployeeList from "../components/EmployeeList";
 
-
 export interface item {
-  item: user
+  item: user;
 }
 
 export default function Employees() {
@@ -34,8 +33,8 @@ export default function Employees() {
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
-  const filtered = useMemo(() => filterEmployees(data, query), [data, query]) ;
-  const filteredAndSorted = useMemo(() => sortEmployees(filtered, sortBy), []) ;
+  const filtered = useMemo(() => filterEmployees(data, query), [data, query]);
+  const filteredAndSorted = useMemo(() => sortEmployees(filtered, sortBy), []);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   function handleSortMenu(sortBy: string) {
@@ -51,7 +50,7 @@ export default function Employees() {
   }
 
   function handleOpenBottomSheet(isOpen: boolean) {
-    if(isOpen){
+    if (isOpen) {
       bottomSheetModalRef.current?.snapToIndex(1);
     } else {
       bottomSheetModalRef.current?.close();
@@ -59,53 +58,56 @@ export default function Employees() {
     setIsOpen(isOpen);
   }
 
-  console.log('render')
-  const renderItem = useCallback(({ item }: item) => (
-    <ApplySwipeable
-      rightActionColor="red"
-      leftActionColor="#45ee9f"
-      RightActionIcon={
-        <IconButton
-          icon={() => (
-            <MaterialCommunityIcons
-              name="trash-can-outline"
-              size={24}
-              color="white"
-            />
-          )}
-          onPress={() => alert("e")}
-        />
-      }
-      LeftActionIcon={
-        <IconButton
-          icon={() => (
-            <MaterialCommunityIcons
-              name="account-edit"
-              size={24}
-              color="white"
-            />
-          )}
-        />
-      }
-    >
-      <Pressable
-        onPress={() => alert("")}
-        style={({ pressed }) => [
-          {
-            backgroundColor: pressed ? "rgb(210, 230, 255)" : "white",
-          },
-        ]}
+  console.log("render");
+  const renderItem = useCallback(
+    ({ item }: item) => (
+      <ApplySwipeable
+        rightActionColor="red"
+        leftActionColor="#45ee9f"
+        RightActionIcon={
+          <IconButton
+            icon={() => (
+              <MaterialCommunityIcons
+                name="trash-can-outline"
+                size={24}
+                color="white"
+              />
+            )}
+            onPress={() => alert("e")}
+          />
+        }
+        LeftActionIcon={
+          <IconButton
+            icon={() => (
+              <MaterialCommunityIcons
+                name="account-edit"
+                size={24}
+                color="white"
+              />
+            )}
+          />
+        }
       >
-        <Employee
-          firstName={item.profile.first_name}
-          lastName={item.profile.last_name}
-          department={item.department || { name: "" }}
-          avatar={item.profile.avatar}
-          position={item.position || { name: "" }}
-        />
-      </Pressable>
-    </ApplySwipeable>
-  ), [])
+        <Pressable
+          onPress={() => alert("")}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "rgb(210, 230, 255)" : "white",
+            },
+          ]}
+        >
+          <Employee
+            firstName={item.profile.first_name}
+            lastName={item.profile.last_name}
+            department={item.department || { name: "" }}
+            avatar={item.profile.avatar}
+            position={item.position || { name: "" }}
+          />
+        </Pressable>
+      </ApplySwipeable>
+    ),
+    []
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -139,9 +141,17 @@ export default function Employees() {
       {loading ? (
         <Loader />
       ) : (
-        <EmployeeList data={filteredAndSorted} refetch={refetch} renderItem={renderItem} loading={loading} />
+        <EmployeeList
+          data={filteredAndSorted}
+          refetch={refetch}
+          renderItem={renderItem}
+          loading={loading}
+        />
       )}
-      <EmployeeSortMenu ref={bottomSheetModalRef} handleOpen={handleOpenBottomSheet}/>
+      <EmployeeSortMenu
+        ref={bottomSheetModalRef}
+        handleOpen={handleOpenBottomSheet}
+      />
     </SafeAreaView>
   );
 }
@@ -181,10 +191,7 @@ function sortEmployees(employees: user[], sortBy: string | null): user[] {
   return [...employees.sort()];
 }
 
-function filterEmployees(
-  employees: users | undefined,
-  query: string
-): user[] {
+function filterEmployees(employees: users | undefined, query: string): user[] {
   return employees
     ? employees.users.filter((user: user) => {
         if (
@@ -193,9 +200,7 @@ function filterEmployees(
               .toLowerCase()
               .includes(query.toLowerCase())) ||
           (user.profile.last_name &&
-            user.profile.last_name
-              .toLowerCase()
-              .includes(query.toLowerCase()))
+            user.profile.last_name.toLowerCase().includes(query.toLowerCase()))
         ) {
           return true;
         }

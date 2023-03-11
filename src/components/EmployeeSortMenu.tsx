@@ -1,10 +1,4 @@
-import React, {
-  forwardRef,
-  Ref,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import React, { forwardRef, Ref, useCallback, useMemo, useState } from "react";
 import { StyleSheet, View, Text, Button } from "react-native";
 import BottomSheet, {
   BottomSheetModal,
@@ -44,12 +38,17 @@ const buttons = [
 ];
 const EmployeeSortMenu = forwardRef(
   (
-    { handleChangeSort, handleSortMenu, handleOpen, sortBy, sortUp }: EmployeeSortMenuProps,
+    {
+      handleChangeSort,
+      handleSortMenu,
+      handleOpen,
+      sortBy,
+      sortUp,
+    }: EmployeeSortMenuProps,
     ref: Ref<BottomSheetModal> | undefined
   ) => {
-
     // variables
-    const snapPoints = useMemo(() => [ "50%", "70%"], []);
+    const snapPoints = useMemo(() => ["50%", "70%"], []);
 
     // callbacks
     const handlePresentModalPress = useCallback(() => {
