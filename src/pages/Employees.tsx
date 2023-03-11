@@ -24,7 +24,7 @@ export default function Employees() {
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortUp, setSortUp] = useState<boolean | null>(null);
   const [fetchingMore, setFetchingMore] = useState<boolean>(false);
-
+  const [fullyLoad, setFullyLoad] = useState<boolean>(false);
   const filtered = filterEmployees(data, query);
   const filteredAndSorted = sortEmployees(filtered, sortBy);
 
@@ -44,6 +44,7 @@ export default function Employees() {
     employees: users | undefined,
     query: string
   ): user[] {
+    employees ? alert(employees.users.length) : alert('')
     return employees
       ? employees.users.filter((user: user) => {
           if (
@@ -108,10 +109,12 @@ export default function Employees() {
             <RefreshControl
               refreshing={loading}
               onRefresh={() =>
-                refetch({
+                {
+                  setFullyLoad(false);
+                  refetch({
                   offset: 0,
                   limit: 20,
-                })
+                })}
               }
             />
           }
@@ -121,12 +124,8 @@ export default function Employees() {
             setFetchingMore(false);
           }}
           onEndReached={() => {
-            if (fetchingMore || filteredAndSorted.length < 7) return;
-            fetchMore({
-              variables: {
-                offset: data.users.length,
-              },
-            });
+            alert('fetching' + data.users.length)
+            
             setFetchingMore(true);
           }}
           style={styles.employees}

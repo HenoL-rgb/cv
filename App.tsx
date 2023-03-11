@@ -30,6 +30,7 @@ export default function App() {
         const value = await AsyncStorage.getItem('token');
         if (value !== null) {
           // We have data!!
+          console.log(value)
           setAuth(true);
           return value;
         }
