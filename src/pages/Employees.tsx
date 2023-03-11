@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { IconButton, TextInput } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/Ionicons";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   FlatList,
   View,
@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   Pressable,
+  SafeAreaView,
 } from "react-native";
 import { USERS } from "../apollo/users/users";
 import Employee from "../components/Employee";
@@ -18,15 +19,24 @@ import { users } from "../interfaces/users";
 import EmployeeSortMenu from "../components/EmployeeSortMenu";
 import ApplySwipeable from "../components/ApplySwipeable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import EmployeeList from "../components/EmployeeList";
+
+
+export interface item {
+  item: user
+}
 
 export default function Employees() {
   const { loading, error, data, refetch } = useQuery(USERS);
   const [query, setQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string | null>(null);
-  const [sortUp, setSortUp] = useState<boolean | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
-  const filtered = filterEmployees(data, query);
-  const filteredAndSorted = sortEmployees(filtered, sortBy);
+  const filtered = useMemo(() => filterEmployees(data, query), [data, query]) ;
+  const filteredAndSorted = useMemo(() => sortEmployees(filtered, sortBy), []) ;
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   function handleSortMenu(sortBy: string) {
     setSortBy(sortBy);
@@ -37,42 +47,68 @@ export default function Employees() {
   }
 
   function handleChangeSort() {
-    setSortUp(sortUp ? !sortUp : true);
+    //setSortUp(sortUp ? !sortUp : true);
   }
 
-  function filterEmployees(
-    employees: users | undefined,
-    query: string
-  ): user[] {
-    return employees
-      ? employees.users.filter((user: user) => {
-          if (
-            (user.profile.first_name &&
-              user.profile.first_name
-                .toLowerCase()
-                .includes(query.toLowerCase())) ||
-            (user.profile.last_name &&
-              user.profile.last_name
-                .toLowerCase()
-                .includes(query.toLowerCase()))
-          ) {
-            return true;
-          }
-          if (!query) {
-            return user;
-          }
-        })
-      : [];
+  function handleOpenBottomSheet(isOpen: boolean) {
+    if(isOpen){
+      bottomSheetModalRef.current?.snapToIndex(1);
+    } else {
+      bottomSheetModalRef.current?.close();
+    }
+    setIsOpen(isOpen);
   }
 
-  function sortEmployees(employees: user[], sortBy: string | null): user[] {
-    if (!sortBy) return employees;
-
-    return [...employees.sort()];
-  }
+  console.log('render')
+  const renderItem = useCallback(({ item }: item) => (
+    <ApplySwipeable
+      rightActionColor="red"
+      leftActionColor="#45ee9f"
+      RightActionIcon={
+        <IconButton
+          icon={() => (
+            <MaterialCommunityIcons
+              name="trash-can-outline"
+              size={24}
+              color="white"
+            />
+          )}
+          onPress={() => alert("e")}
+        />
+      }
+      LeftActionIcon={
+        <IconButton
+          icon={() => (
+            <MaterialCommunityIcons
+              name="account-edit"
+              size={24}
+              color="white"
+            />
+          )}
+        />
+      }
+    >
+      <Pressable
+        onPress={() => alert("")}
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? "rgb(210, 230, 255)" : "white",
+          },
+        ]}
+      >
+        <Employee
+          firstName={item.profile.first_name}
+          lastName={item.profile.last_name}
+          department={item.department || { name: "" }}
+          avatar={item.profile.avatar}
+          position={item.position || { name: "" }}
+        />
+      </Pressable>
+    </ApplySwipeable>
+  ), [])
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.searchAndSort}>
         <TextInput
           variant="outlined"
@@ -88,12 +124,14 @@ export default function Employees() {
           value={query}
           onChangeText={handleQuery}
         />
-        <EmployeeSortMenu
-          sortBy={sortBy}
-          sortUp={sortUp}
-          handleChangeSort={handleChangeSort}
-          handleSortMenu={handleSortMenu}
-        />
+        <View style={styles.settingsBtn}>
+          <IconButton
+            icon={() => (
+              <MaterialIcons name="settings" size={24} color="black" />
+            )}
+            onPress={() => handleOpenBottomSheet(!isOpen)}
+          />
+        </View>
       </View>
 
       {error ? <Text>Error while loading employees</Text> : ""}
@@ -101,65 +139,11 @@ export default function Employees() {
       {loading ? (
         <Loader />
       ) : (
-        <FlatList
-          data={filteredAndSorted}
-          initialNumToRender={20}
-          refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={() => refetch()} />
-          }
-          ItemSeparatorComponent={() => <View style={{ height: 2 }} />}
-          style={styles.employees}
-          renderItem={({ item }) => (
-            <ApplySwipeable
-              rightActionColor="red"
-              leftActionColor="#45ee9f"
-              RightActionIcon={
-                <IconButton
-                  icon={() => (
-                    <MaterialCommunityIcons
-                      name="trash-can-outline"
-                      size={24}
-                      color="white"
-                    />
-                  )}
-                  onPress={() => alert("e")}
-                />
-              }
-              LeftActionIcon={
-                <IconButton
-                  icon={() => (
-                    <MaterialCommunityIcons
-                      name="account-edit"
-                      size={24}
-                      color="white"
-                    />
-                  )}
-                />
-              }
-            >
-              <Pressable
-                onPress={() => alert("")}
-                style={({ pressed }) => [
-                  {
-                    backgroundColor: pressed ? "rgb(210, 230, 255)" : "white",
-                  },
-                ]}
-              >
-                <Employee
-                  firstName={item.profile.first_name}
-                  lastName={item.profile.last_name}
-                  department={item.department || { name: "" }}
-                  avatar={item.profile.avatar}
-                  position={item.position || { name: "" }}
-                />
-              </Pressable>
-            </ApplySwipeable>
-          )}
-        ></FlatList>
+        <EmployeeList data={filteredAndSorted} refetch={refetch} renderItem={renderItem} loading={loading} />
       )}
-    </View>
+      <EmployeeSortMenu ref={bottomSheetModalRef} handleOpen={handleOpenBottomSheet}/>
+    </SafeAreaView>
   );
-
 }
 
 function compByFirstName(user1: user, user2: user) {
@@ -192,6 +176,36 @@ function compByPosition(user1: user, user2: user) {
   return user1.position.name.localeCompare(user2.position.name);
 }
 
+function sortEmployees(employees: user[], sortBy: string | null): user[] {
+  //if (!sortBy) return employees;
+  return [...employees.sort()];
+}
+
+function filterEmployees(
+  employees: users | undefined,
+  query: string
+): user[] {
+  return employees
+    ? employees.users.filter((user: user) => {
+        if (
+          (user.profile.first_name &&
+            user.profile.first_name
+              .toLowerCase()
+              .includes(query.toLowerCase())) ||
+          (user.profile.last_name &&
+            user.profile.last_name
+              .toLowerCase()
+              .includes(query.toLowerCase()))
+        ) {
+          return true;
+        }
+        if (!query) {
+          return user;
+        }
+      })
+    : [];
+}
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
@@ -202,17 +216,24 @@ const styles = StyleSheet.create({
   },
   searchAndSort: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
     paddingRight: 5,
   },
   input: {
-    margin: 16,
+    marginLeft: 16,
+    marginTop: 16,
+    marginBottom: 16,
     flex: 2,
     inputStyle: {
       fontSize: 16,
       paddingStart: 16,
       paddingEnd: 12,
     },
+  },
+  settingsBtn: {
+    width: 65,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

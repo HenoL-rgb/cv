@@ -1,14 +1,23 @@
-import { IconButton } from "@react-native-material/core";
-import React, { useState } from "react";
-import { StyleSheet, View, Text } from "react-native";
-import MaterialIcon from "@expo/vector-icons/MaterialCommunityIcons";
-import { Menu, MenuItem } from "react-native-material-menu";
+import React, {
+  forwardRef,
+  Ref,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { StyleSheet, View, Text, Button } from "react-native";
+import BottomSheet, {
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 
 export interface EmployeeSortMenuProps {
-  handleChangeSort: () => void;
-  handleSortMenu: (sortBy: string) => void;
-  sortUp: boolean | null;
-  sortBy: string | null;
+  handleChangeSort?: () => void;
+  handleSortMenu?: (sortBy: string) => void;
+  handleOpen: (isOpen: boolean) => void;
+  sortUp?: boolean | null;
+  sortBy?: string | null;
+  isOpen?: boolean;
 }
 
 const buttons = [
@@ -33,65 +42,57 @@ const buttons = [
     name: "Position",
   },
 ];
+const EmployeeSortMenu = forwardRef(
+  (
+    { handleChangeSort, handleSortMenu, handleOpen, sortBy, sortUp }: EmployeeSortMenuProps,
+    ref: Ref<BottomSheetModal> | undefined
+  ) => {
 
-export default function EmployeeSortMenu({
-  handleChangeSort,
-  sortUp,
-  sortBy,
-  handleSortMenu,
-}: EmployeeSortMenuProps) {
-  const [visible, setVisible] = useState<boolean>(false);
+    // variables
+    const snapPoints = useMemo(() => [ "50%", "70%"], []);
 
-  const hideMenu = () => setVisible(false);
+    // callbacks
+    const handlePresentModalPress = useCallback(() => {
+      //bottomSheetModalRef.current?.present();
+    }, []);
+    const handleSheetChanges = useCallback((index: number) => {
+      console.log("handleSheetChanges", index);
+    }, []);
 
-  const showMenu = () => setVisible(true);
+    function handleSetSort(id: string) {
+      // handleSortMenu(id);
+    }
 
-  function handleSetSort(id: string) {
-    handleSortMenu(id);
-    hideMenu();
-  }
-
-  return (
-    <View style={{ alignItems: "center", justifyContent: "center" }}>
-      <Menu
-        visible={visible}
-        anchor={
-          <IconButton
-            onLongPress={showMenu}
-            onPress={handleChangeSort}
-            icon={(props) => (
-              <MaterialIcon
-                name={!sortUp ? "sort-ascending" : "sort-descending"}
-                {...props}
-              />
-            )}
-          />
-        }
-        onRequestClose={hideMenu}
+    return (
+      <BottomSheet
+        ref={ref}
+        snapPoints={snapPoints}
+        enablePanDownToClose={true}
+        onClose={() => handleOpen(false)}
       >
-        {buttons.map((button) => (
-          <MenuItem
-            style={
-              sortBy === button.id ? styles.activeBlock : styles.defaultBlock
-            }
-            onPress={() => handleSetSort(button.id)}
-            key={button.id}
-          >
-            <Text
-              style={
-                sortBy === button.id ? styles.activeText : styles.defaultText
-              }
-            >
-              {button.name}
-            </Text>
-          </MenuItem>
-        ))}
-      </Menu>
-    </View>
-  );
-}
+        <BottomSheetView style={styles.contentContainer}>
+          <Text>Awesome 🎉</Text>
+        </BottomSheetView>
+      </BottomSheet>
+    );
+  }
+);
+
+EmployeeSortMenu.displayName = "EmployeeSortMenu";
+
+export default EmployeeSortMenu;
 
 const styles = StyleSheet.create({
+  bottomSheetContainer: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
   activeBlock: {
     backgroundColor: "#C63031",
   },
