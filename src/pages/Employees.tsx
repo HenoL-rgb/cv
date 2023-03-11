@@ -2,8 +2,14 @@ import { useQuery } from "@apollo/client";
 import { IconButton, TextInput } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
-import { FlatList, View, RefreshControl, StyleSheet, Text } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  FlatList,
+  View,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  Pressable,
+} from "react-native";
 import { USERS } from "../apollo/users/users";
 import Employee from "../components/Employee";
 import Loader from "../components/Loader";
@@ -14,17 +20,11 @@ import ApplySwipeable from "../components/ApplySwipeable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Employees() {
-  const { loading, error, data, fetchMore, refetch } = useQuery(USERS, {
-    variables: {
-      offset: 0,
-      limit: 20,
-    },
-  });
+  const { loading, error, data, refetch } = useQuery(USERS);
   const [query, setQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortUp, setSortUp] = useState<boolean | null>(null);
-  const [fetchingMore, setFetchingMore] = useState<boolean>(false);
-  const [fullyLoad, setFullyLoad] = useState<boolean>(false);
+
   const filtered = filterEmployees(data, query);
   const filteredAndSorted = sortEmployees(filtered, sortBy);
 
@@ -44,7 +44,6 @@ export default function Employees() {
     employees: users | undefined,
     query: string
   ): user[] {
-    employees ? alert(employees.users.length) : alert('')
     return employees
       ? employees.users.filter((user: user) => {
           if (
@@ -69,7 +68,7 @@ export default function Employees() {
   function sortEmployees(employees: user[], sortBy: string | null): user[] {
     if (!sortBy) return employees;
 
-    return [...employees.sort(sortUp ? compareAsc : compareDesc)];
+    return [...employees.sort()];
   }
 
   return (
@@ -106,28 +105,9 @@ export default function Employees() {
           data={filteredAndSorted}
           initialNumToRender={20}
           refreshControl={
-            <RefreshControl
-              refreshing={loading}
-              onRefresh={() =>
-                {
-                  setFullyLoad(false);
-                  refetch({
-                  offset: 0,
-                  limit: 20,
-                })}
-              }
-            />
+            <RefreshControl refreshing={loading} onRefresh={() => refetch()} />
           }
-          ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
-          onEndReachedThreshold={0.5}
-          onMomentumScrollBegin={() => {
-            setFetchingMore(false);
-          }}
-          onEndReached={() => {
-            alert('fetching' + data.users.length)
-            
-            setFetchingMore(true);
-          }}
+          ItemSeparatorComponent={() => <View style={{ height: 2 }} />}
           style={styles.employees}
           renderItem={({ item }) => (
             <ApplySwipeable
@@ -157,7 +137,14 @@ export default function Employees() {
                 />
               }
             >
-              <TouchableOpacity>
+              <Pressable
+                onPress={() => alert("")}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed ? "rgb(210, 230, 255)" : "white",
+                  },
+                ]}
+              >
                 <Employee
                   firstName={item.profile.first_name}
                   lastName={item.profile.last_name}
@@ -165,80 +152,44 @@ export default function Employees() {
                   avatar={item.profile.avatar}
                   position={item.position || { name: "" }}
                 />
-              </TouchableOpacity>
+              </Pressable>
             </ApplySwipeable>
           )}
-          ListFooterComponent={fetchingMore ? <Loader /> : null}
         ></FlatList>
       )}
     </View>
   );
 
-  function compareAsc(user1: user, user2: user) {
-    if (!sortBy) return 0;
-    switch (sortBy) {
-      case "first_name": {
-        if (!user1.profile.first_name) return -1;
-        if (!user2.profile.first_name) return 1;
-        return user1.profile.first_name.localeCompare(user2.profile.first_name);
-      }
-      case "last_name": {
-        if (!user1.profile.last_name) return -1;
-        if (!user2.profile.last_name) return 1;
-        return user1.profile.last_name.localeCompare(user2.profile.last_name);
-      }
-      case "email": {
-        if (!user1.email) return -1;
-        if (!user2.email) return 1;
-        return user1.email.localeCompare(user2.email);
-      }
-      case "department": {
-        if (!user1.department) return -1;
-        if (!user2.department) return 1;
-        return user1.department.name.localeCompare(user2.department.name);
-      }
-      case "position": {
-        if (!user1.position) return -1;
-        if (!user2.position) return 1;
-        return user1.position.name.localeCompare(user2.position.name);
-      }
-    }
+}
 
-    return -1;
-  }
+function compByFirstName(user1: user, user2: user) {
+  if (!user1.profile.first_name) return -1;
+  if (!user2.profile.first_name) return 1;
+  return user1.profile.first_name.localeCompare(user2.profile.first_name);
+}
 
-  function compareDesc(user1: user, user2: user) {
-    if (!sortBy) return 0;
-    switch (sortBy) {
-      case "first_name": {
-        if (!user1.profile.first_name) return 1;
-        if (!user2.profile.first_name) return -1;
-        return user2.profile.first_name.localeCompare(user1.profile.first_name);
-      }
-      case "last_name": {
-        if (!user1.profile.last_name) return 1;
-        if (!user2.profile.last_name) return -1;
-        return user2.profile.last_name.localeCompare(user1.profile.last_name);
-      }
-      case "email": {
-        if (!user1.email) return 1;
-        if (!user2.email) return -1;
-        return user2.email.localeCompare(user1.email);
-      }
-      case "department": {
-        if (!user1.department) return 1;
-        if (!user2.department) return -1;
-        return user2.department.name.localeCompare(user1.department.name);
-      }
-      case "position": {
-        if (!user1.position) return 1;
-        if (!user2.position) return -1;
-        return user2.position.name.localeCompare(user1.position.name);
-      }
-    }
+function compByLastName(user1: user, user2: user) {
+  if (!user1.profile.last_name) return -1;
+  if (!user2.profile.last_name) return 1;
+  return user1.profile.last_name.localeCompare(user2.profile.last_name);
+}
 
-    return -1;
-  }
+function compByEmail(user1: user, user2: user) {
+  if (!user1.email) return -1;
+  if (!user2.email) return 1;
+  return user1.email.localeCompare(user2.email);
+}
+
+function compByDepartment(user1: user, user2: user) {
+  if (!user1.department) return -1;
+  if (!user2.department) return 1;
+  return user1.department.name.localeCompare(user2.department.name);
+}
+
+function compByPosition(user1: user, user2: user) {
+  if (!user1.position) return -1;
+  if (!user2.position) return 1;
+  return user1.position.name.localeCompare(user2.position.name);
 }
 
 const styles = StyleSheet.create({

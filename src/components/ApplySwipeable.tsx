@@ -74,6 +74,7 @@ export default function ApplySwipeable({
       containerStyle={[styles.container, {}]}
       overshootLeft={false}
       overshootRight={false}
+      
     >
       {children}
     </Swipeable>

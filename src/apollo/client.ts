@@ -34,19 +34,9 @@ const httpLink = createHttpLink({
     uri: "https://cv-project-js.inno.ws/api/graphql"
 })
 
-const cache = new InMemoryCache({
-  typePolicies: {
-    Query: {
-      fields: {
-        users: offsetLimitPagination(),
-      },
-    },
-  },
-});
-
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache,
+  cache: new InMemoryCache(),
 });
 
 export default client;
