@@ -41,5 +41,11 @@
     "typescript": "^4.9.4",
     "husky": "^8.0.0"
   },
-  "private": true
+  "private": true,
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged"
+    }
+  }
 }
