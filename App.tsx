@@ -9,7 +9,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import SignUp from "./src/pages/SignUp";
 import Login from "./src/pages/Login";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Account from "./src/pages/Account";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -44,38 +44,48 @@ export default function App() {
 
   return (
     <>
-      <ApolloProvider client={client}>
-        {auth ? (
-            <NavigationContainer>
-              <Drawer.Navigator initialRouteName="Employees">
-                <Drawer.Screen
-                  name="Employees"
-                  component={Employees}
-                  options={{
-                    drawerIcon: ({ size, color }) => (
-                      <Foundation name="torsos" size={size} color={color} />
-                    ),
-                  }}
-                />
-              </Drawer.Navigator>
-            </NavigationContainer>
-        ) : (
-          <NavigationContainer>
-            <RootStack.Navigator initialRouteName="Login">
-              <RootStack.Screen
-                name="Login"
-                component={Login}
-                options={{ title: "Login" }}
-              />
-              <RootStack.Screen
-                name="SignUp"
-                component={SignUp}
-                options={{ title: "Sign up" }}
-              />
-            </RootStack.Navigator>
-          </NavigationContainer>
-        )}
-      </ApolloProvider>
+    <ApolloProvider client={client}>
+      {auth ? (
+        <NavigationContainer>
+          <Drawer.Navigator initialRouteName="Employees">
+            <Drawer.Screen
+              name="Employees"
+              component={Employees}
+              options={{
+                drawerIcon: ({ focused, size, color }) => (
+                  <Foundation name="torsos" size={size} color={color} />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="Account"
+              component={Account}
+              options={{
+                drawerIcon: ({ focused, size, color }) => (
+                  <Foundation name="torsos" size={size} color={color} />
+                ),
+                unmountOnBlur: true
+              }}
+            />
+          </Drawer.Navigator>
+        </NavigationContainer>
+      ) : (
+        <NavigationContainer>
+          <RootStack.Navigator initialRouteName="Login">
+            <RootStack.Screen
+              name="Login"
+              component={Login}
+              options={{ title: "Login" }}
+            />
+            <RootStack.Screen
+              name="SignUp"
+              component={SignUp}
+              options={{ title: "Sign up" }}
+            />
+          </RootStack.Navigator>
+        </NavigationContainer>
+      )}
+    </ApolloProvider>
     </>
   );
 }
