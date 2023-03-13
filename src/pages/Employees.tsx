@@ -9,10 +9,10 @@ import Employee from "../components/Employee";
 import Loader from "../components/Loader";
 import { user } from "../interfaces/user";
 import { users } from "../interfaces/users";
-import EmployeeSortMenu from "../components/EmployeeSortMenu";
 
 export default function Employees() {
   const { loading, error, data } = useQuery(USERS);
+  
   const [query, setQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortUp, setSortUp] = useState<boolean | null>(null);
@@ -65,10 +65,10 @@ export default function Employees() {
           style={{ margin: 16, flex: 2 }}
           inputStyle={{ fontSize: 16, paddingStart: 16, paddingEnd: 12 }}
           color="rgba(0,0,0, 0.5)"
-          trailing={(props: JSX.IntrinsicAttributes) => (
+          trailing={() => (
             <IconButton
               icon={(props) => <Icon name="search-outline" {...props} />}
-              {...props}
+             
             />
           )}
           value={query}

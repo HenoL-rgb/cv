@@ -68,6 +68,7 @@ export default function App() {
                 drawerIcon: ({ focused, size, color }) => (
                   <Foundation name="torsos" size={size} color={color} />
                 ),
+                unmountOnBlur: true
               }}
             />
           </Drawer.Navigator>
