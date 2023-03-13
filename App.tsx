@@ -29,7 +29,6 @@ export default function App() {
         const value = await AsyncStorage.getItem("token");
         if (value !== null) {
           // We have data!!
-          console.log(value);
           setAuth(true);
           return value;
         }
@@ -47,19 +46,19 @@ export default function App() {
     <>
       <ApolloProvider client={client}>
         {auth ? (
-          <NavigationContainer>
-            <Drawer.Navigator initialRouteName="Employees">
-              <Drawer.Screen
-                name="Employees"
-                component={Employees}
-                options={{
-                  drawerIcon: ({ size, color }) => (
-                    <Foundation name="torsos" size={size} color={color} />
-                  ),
-                }}
-              />
-            </Drawer.Navigator>
-          </NavigationContainer>
+            <NavigationContainer>
+              <Drawer.Navigator initialRouteName="Employees">
+                <Drawer.Screen
+                  name="Employees"
+                  component={Employees}
+                  options={{
+                    drawerIcon: ({ size, color }) => (
+                      <Foundation name="torsos" size={size} color={color} />
+                    ),
+                  }}
+                />
+              </Drawer.Navigator>
+            </NavigationContainer>
         ) : (
           <NavigationContainer>
             <RootStack.Navigator initialRouteName="Login">

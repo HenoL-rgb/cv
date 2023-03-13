@@ -1,9 +1,19 @@
-import React, { forwardRef, Ref, useCallback, useMemo, useState } from "react";
-import { StyleSheet, View, Text, Button } from "react-native";
+import React, {
+  forwardRef,
+  Ref,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { StyleSheet, View, Text } from "react-native";
 import BottomSheet, {
+  BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import { Chip, Stack, Button } from "@react-native-material/core";
 
 export interface EmployeeSortMenuProps {
   handleChangeSort?: () => void;
@@ -11,7 +21,7 @@ export interface EmployeeSortMenuProps {
   handleOpen: (isOpen: boolean) => void;
   sortUp?: boolean | null;
   sortBy?: string | null;
-  isOpen?: boolean;
+  isOpen: boolean;
 }
 
 const buttons = [
@@ -36,52 +46,88 @@ const buttons = [
     name: "Position",
   },
 ];
-const EmployeeSortMenu = forwardRef(
-  (
-    {
-      handleChangeSort,
-      handleSortMenu,
-      handleOpen,
-      sortBy,
-      sortUp,
-    }: EmployeeSortMenuProps,
-    ref: Ref<BottomSheetModal> | undefined
-  ) => {
-    // variables
-    const snapPoints = useMemo(() => ["50%", "70%"], []);
+export default function EmployeeSortMenu({
+  handleChangeSort,
+  handleSortMenu,
+  handleOpen,
+  sortBy,
+  sortUp,
+  isOpen,
+}: EmployeeSortMenuProps) {
+  const [isAscending, setIsAscending] = useState<boolean | null>(null);
+  const snapPoints = useMemo(() => ["50%", "70%"], []);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-    // callbacks
-    const handlePresentModalPress = useCallback(() => {
-      //bottomSheetModalRef.current?.present();
-    }, []);
-    const handleSheetChanges = useCallback((index: number) => {
-      console.log("handleSheetChanges", index);
-    }, []);
-
-    function handleSetSort(id: string) {
-      // handleSortMenu(id);
+  useEffect(() => {
+    if (isOpen) {
+      bottomSheetModalRef.current?.snapToIndex(0);
+    } else {
+      bottomSheetModalRef.current?.close();
     }
+  }, [isOpen, bottomSheetModalRef.current]);
 
-    return (
-      <BottomSheet
-        ref={ref}
-        snapPoints={snapPoints}
-        enablePanDownToClose={true}
-        onClose={() => handleOpen(false)}
-      >
-        <BottomSheetView style={styles.contentContainer}>
-          <Text>Awesome 🎉</Text>
-        </BottomSheetView>
-      </BottomSheet>
-    );
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    //bottomSheetModalRef.current?.present();
+  }, []);
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
+  function handleSetSort(id: string) {
+    // handleSortMenu(id);
   }
-);
 
-EmployeeSortMenu.displayName = "EmployeeSortMenu";
+  return (
+    <BottomSheet
+      ref={bottomSheetModalRef}
+      snapPoints={snapPoints}
+      enablePanDownToClose={true}
+      onClose={() => handleOpen(false)}
+      index={-1}
+      style={styles.bottomSheet}
+      // backdropComponent={(props) => (
+      //   <BottomSheetBackdrop
+      //     disappearsOnIndex={-1}
+      //     appearsOnIndex={0}
+      //     opacity={0}
+      //     {...props}
+      //     onPress={() => alert('f')}
+      //   />
+      // )}
+    >
+      <BottomSheetView style={styles.contentContainer}>
+        <View>
+          <Text>Sort direction: </Text>
+            <Button
+              variant={isAscending ? "contained" : "outlined"}
+              title="Ascending"
+            />
+            <Button
+            variant={isAscending !== null && !isAscending ? "contained" : "outlined"}
+              title="Descending"
+            />
 
-export default EmployeeSortMenu;
+          <Button title="Descending" />
+        </View>
+      </BottomSheetView>
+    </BottomSheet>
+  );
+}
 
 const styles = StyleSheet.create({
+  bottomSheet: {
+    backgroundColor: "white",
+    borderRadius: 24,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 30,
+    elevation: 10,
+  },
   bottomSheetContainer: {
     flex: 1,
     width: "100%",
@@ -92,16 +138,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
-  activeBlock: {
-    backgroundColor: "#C63031",
-  },
-  activeText: {
-    color: "#ffffff",
-  },
-  defaultBlock: {
-    backgroundColor: "#ffffff",
-  },
-  defaultText: {
-    color: "#000000",
+  directionButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 100,
   },
 });

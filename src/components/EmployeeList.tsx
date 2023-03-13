@@ -22,6 +22,8 @@ const EmployeeList = memo(function EmployeeList({
   renderItem,
   loading,
 }: EmployeeListProps) {
+
+    
   return (
     <FlatList
       data={data}

@@ -22,6 +22,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import EmployeeList from "../components/EmployeeList";
+import { NativeSyntheticEvent } from "react-native";
+import { TargetedEvent } from "react-native";
 
 export interface item {
   item: user;
@@ -31,10 +33,11 @@ export default function Employees() {
   const { loading, error, data, refetch } = useQuery(USERS);
   const [query, setQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const filtered = useMemo(() => filterEmployees(data, query), [data, query]);
-  const filteredAndSorted = useMemo(() => sortEmployees(filtered, sortBy), []);
+  const filteredAndSorted = useMemo(() => sortEmployees(filtered, sortBy), [filtered, sortBy]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   function handleSortMenu(sortBy: string) {
@@ -50,15 +53,9 @@ export default function Employees() {
   }
 
   function handleOpenBottomSheet(isOpen: boolean) {
-    if (isOpen) {
-      bottomSheetModalRef.current?.snapToIndex(1);
-    } else {
-      bottomSheetModalRef.current?.close();
-    }
     setIsOpen(isOpen);
   }
 
-  console.log("render");
   const renderItem = useCallback(
     ({ item }: item) => (
       <ApplySwipeable
@@ -110,6 +107,7 @@ export default function Employees() {
   );
 
   return (
+    
     <SafeAreaView style={styles.container}>
       <View style={styles.searchAndSort}>
         <TextInput
@@ -125,6 +123,7 @@ export default function Employees() {
           )}
           value={query}
           onChangeText={handleQuery}
+          editable={!isOpen}
         />
         <View style={styles.settingsBtn}>
           <IconButton
@@ -149,8 +148,8 @@ export default function Employees() {
         />
       )}
       <EmployeeSortMenu
-        ref={bottomSheetModalRef}
         handleOpen={handleOpenBottomSheet}
+        isOpen={isOpen}
       />
     </SafeAreaView>
   );
