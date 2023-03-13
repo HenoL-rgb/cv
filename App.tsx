@@ -1,13 +1,11 @@
 import { ApolloProvider } from "@apollo/client";
 import client from "./src/apollo/client";
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import Employees from "./src/pages/Employees";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Foundation } from "@expo/vector-icons";
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator } from "@react-navigation/stack";
 import SignUp from "./src/pages/SignUp";
 import Login from "./src/pages/Login";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -18,19 +16,17 @@ export type RootStackParamList = {
   SignUp: undefined;
 };
 
-
 const RootStack = createStackNavigator<RootStackParamList>();
 
 const Drawer = createDrawerNavigator();
 
 export default function App() {
-  
   const [auth, setAuth] = useState(false);
 
   useEffect(() => {
     const _retrieveToken = async () => {
       try {
-        const value = await AsyncStorage.getItem('token');
+        const value = await AsyncStorage.getItem("token");
         if (value !== null) {
           // We have data!!
           setAuth(true);
@@ -38,13 +34,13 @@ export default function App() {
         }
       } catch (error) {
         // Error retrieving data
-        console.log(error)
+        console.log(error);
       }
-      return '';
+      return "";
     };
 
     _retrieveToken();
-  }, [])
+  }, []);
 
   return (
     <>
@@ -93,9 +89,3 @@ export default function App() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-});

@@ -25,11 +25,11 @@ export default function Employee(props: Employee) {
         )}
       </View>
       <View style={styles.textContainer}>
-        <Text style={styles.title}>
-          {props.firstName} {props.lastName}
+        <Text style={styles.title} numberOfLines={1}>
+          {props.firstName ? props.firstName : 'Unknown'} {props.lastName}
         </Text>
-        <Text style={styles.text}>{props.position.name}</Text>
-        <Text style={styles.text}>{props.department.name}</Text>
+        <Text style={styles.text} numberOfLines={2}>{props.position.name}</Text>
+        <Text style={styles.text} numberOfLines={1}>{props.department.name}</Text>
       </View>
     </View>
   );
@@ -40,8 +40,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     columnGap: 10,
-    padding: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
     alignItems: 'center',
+    backgroundColor: 'white',
+    height: 80,
   },
   avatar: {
     borderRadius: 50,
@@ -55,6 +58,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   text: {
-    color: 'rgba(0,0,0,0.4)'
+    color: 'rgba(0,0,0,0.4)',
+    
   }
 });

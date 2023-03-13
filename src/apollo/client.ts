@@ -1,6 +1,8 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { offsetLimitPagination } from "@apollo/client/utilities";
+
 
 const authLink = setContext(async (_, { headers }) => {
   // get the authentication token from local storage if it exists
@@ -31,6 +33,7 @@ const authLink = setContext(async (_, { headers }) => {
 const httpLink = createHttpLink({
     uri: "https://cv-project-js.inno.ws/api/graphql"
 })
+
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),

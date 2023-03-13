@@ -7,10 +7,12 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@apollo/client": "^3.7.9",
+    "@gorhom/bottom-sheet": "^4.4.5",
     "@react-native-async-storage/async-storage": "^1.17.11",
     "@react-native-material/core": "^1.3.7",
     "@react-navigation/bottom-tabs": "^6.5.7",
@@ -25,7 +27,6 @@
     "react": "18.2.0",
     "react-hook-form": "^7.43.3",
     "react-native": "0.71.3",
-    "react-native-actions-sheet-picker": "^0.3.5",
     "react-native-element-dropdown": "^2.8.0",
     "react-native-gesture-handler": "~2.9.0",
     "react-native-image-picker": "^5.1.0",
@@ -44,7 +45,14 @@
     "@typescript-eslint/parser": "^5.54.0",
     "eslint": "^8.35.0",
     "eslint-plugin-react": "^7.32.2",
+    "husky": "^8.0.0",
     "typescript": "^4.9.4"
   },
-  "private": true
+  "private": true,
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged"
+    }
+  }
 }

@@ -42,7 +42,6 @@ export default function Login({ navigation }: Props) {
     try {
       const { data } = await login({ variables: values });
       _storeToken(data.login.access_token)
-      
     } catch (e) {
       console.log(e);
     }
